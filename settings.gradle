@@ -1,0 +1,4 @@
+rootProject.name = 'TDandTP_INFO_PO_Rennes1'
+include 'TD'
+include 'TP'
+
