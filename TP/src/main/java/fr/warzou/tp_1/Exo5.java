@@ -3,7 +3,7 @@ package fr.warzou.tp_1;
 public class Exo5 {
 
     public static void main(String[] args) {
-        System.out.println(mirror(21));
+        System.out.println(mirror(45875));
     }
 
     public static int mirror(int n) {
