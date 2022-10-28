@@ -33,7 +33,7 @@ public class TP_2 {
     }
 
     /**
-     * @param m sudoky
+     * @param m sudoku
      * @param v value
      * @param i ligne
      * @param j colonne
@@ -77,9 +77,12 @@ public class TP_2 {
         return valeurPossible;
     }
 
+    /**
+     * @param grille sudoku en clair
+     */
     private static void essais(String grille) {
         int [][] m = aPartirDe(grille);
-        System.out.println("Problème \n\n " + enClair(m));
+        System.out.println("Problème \n\n" + enClair(m));
         for (int i = 0; i < m.length; i++) {
             for (int j = 0; j < m.length; j++) {
                 if (m[i][j] != 0)
@@ -90,7 +93,7 @@ public class TP_2 {
                     m[i][j] = value;
             }
         }
-        System.out.println("Il se peut qu' on ait avancé \n\n " + enClair(m)) ;
+        System.out.println("Il se peut qu' on ait avancé \n\n" + enClair(m));
     }
 
     /**
@@ -114,8 +117,8 @@ public class TP_2 {
     }
 
     public static void main(String[] args) {
-        String grille1 = """
-                000 402 000\s
+        String grille0 = """
+                 000 402 000\s
                  030 000 090\s
                  902 000 105\s
                 \s
@@ -126,7 +129,8 @@ public class TP_2 {
                  408 901 507\s
                  090 000 040\s
                  003 705 900\s""";
-        int[][] sudoku = aPartirDe(grille1);
+        int[][] sudoku = aPartirDe(grille0);
+        /*print -> resultat attendu*/
         System.out.println(presentLigne(sudoku, 5, 0)); // false
         System.out.println(presentLigne(sudoku, 5, 2)); // true
         System.out.println(presentColonne(sudoku, 8, 0)); // false
@@ -135,20 +139,26 @@ public class TP_2 {
         System.out.println(estPresentRegion(sudoku, 1, 3, 3)); // true
         System.out.println(estPresentRegion(sudoku, 1, 7, 8)); // false
         System.out.println(Arrays.toString(lesPossiblesEn(sudoku, 0, 0))); // [true, false, false, false, false, true, true, true, false]
+        System.out.println(Arrays.toString(lesPossiblesEn(sudoku, 6, 1))); // [false, false, false, false, false, true, false, false, false]
+        System.out.println(toutSeul(sudoku, 0, 0)); // -1
+        System.out.println(toutSeul(sudoku, 6, 1)); // 6
+        System.out.println(Arrays.toString(region(0, 0))); // [0, 0]
+        System.out.println(Arrays.toString(region(2, 7))); // [0, 6]
+        System.out.println(Arrays.toString(region(8, 1))); // [6, 0]
 
-        String grille0 = """
-                100 000 000\s
-                 000 010 000\s
-                 000 000 000\s
+        String grille1 = """
+                 075 000 000\s
+                 896 000 000\s
+                 234 567 890\s
                 \s
-                 010 000 000\s
-                 000 000 010\s
-                 000 100 000\s
+                 007 000 000\s
+                 008 000 000\s
+                 009 000 000\s
                 \s
-                 001 000 000\s
-                 000 000 100\s
-                 000 001 000\s""";
+                 002 000 000\s
+                 003 000 000\s
+                 000 000 000\s""";
 
-        essais(grille0);
+        essais(grille1); // met un 1 aux positions [0, 0], [2, 8], [8, 2]
     }
 }

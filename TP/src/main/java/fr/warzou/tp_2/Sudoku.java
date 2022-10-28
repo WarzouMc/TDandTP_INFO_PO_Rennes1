@@ -1,5 +1,7 @@
 package fr.warzou.tp_2;
 
+import java.util.Arrays;
+
 public class Sudoku {
 	/*
 	 * 
@@ -55,8 +57,14 @@ public class Sudoku {
 		return m ;
 		
 	} // aPartirDe
-	
-	static boolean presentLigne (int [][] m, int v, int i) {
+
+	/**
+	 * @param m sukodu
+	 * @param v valeur
+	 * @param i ligne
+	 * @return v est present dans la ligne i
+	 */
+	static boolean presentLigne(int [][] m, int v, int i) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -65,10 +73,18 @@ public class Sudoku {
 		 * Resultat : dans m, v est present dans la ligne i
 		 * 
 		 */
-		return true ; // A MODIFIER
+		for (int j = 0; j < m[i].length; j++)
+			if (m[i][j] == v) return true;
+		return false;
 	} // presentLigne
-	
-	static boolean presentColonne (int [][] m, int v, int j) {
+
+	/**
+	 * @param m sudoku
+	 * @param v valeur
+	 * @param j colonne
+	 * @return v est present dans la colonne i
+	 */
+	static boolean presentColonne(int [][] m, int v, int j) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -77,10 +93,19 @@ public class Sudoku {
 		 * Resultat : dans m, v est present dans la colonne j
 		 * 
 		 */
-		return true ; // A MODIFIER
+		for (int i = 0; i < m[j].length; i++)
+			if (m[i][j] == v) return true;
+		return false;
 	} // presentColonne
-	
-	static boolean presentRegion  (int [][] m, int v, int i, int j) {
+
+	/**
+	 * @param m sudoku
+	 * @param v value
+	 * @param i ligne
+	 * @param j colonne
+	 * @return v est present dans la region contenant le point (i ; j)
+	 */
+	static boolean presentRegion(int [][] m, int v, int i, int j) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -89,10 +114,22 @@ public class Sudoku {
 		 * Resultat : dans m, v est present dans la region contenant la case <i, j>
 		 * 
 		 */
-		return true ; // A MODIFIER
+		int[] region = region(i, j);
+		for (int x = 0; x < n; x++) {
+			for (int y = 0; y < n; y++) {
+				if (m[region[0] + x][region[1] + y] == v) return true;
+			}
+		}
+		return false;
 	} // presentRegion
-	
-	static boolean [] lesPossiblesEn (int [][] m, int i, int j) {
+
+	/**
+	 * @param m le sudoku
+	 * @param i une ligne
+	 * @param j une colonne
+	 * @return un tableau contenant (l'<code>index + 1</code> est possible au point (i ; j)
+	 */
+	static boolean [] lesPossiblesEn(int [][] m, int i, int j) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -102,10 +139,12 @@ public class Sudoku {
 		 * r[v] indique si v peut etre place en <i, j>
 		 * 
 		 */
-		return null ; // A MODIFIER
+		boolean[] array = new boolean[n * n];
+		for (int k = 0; k < array.length; k++) array[k] = estPossible(m, i, j, k + 1);
+		return array;
 	} // lesPossiblesEn
 	
-	static String enClair (boolean[] t) {
+	static String enClair(boolean[] t) {
 		/*
 		 * Prerequis : t.length != 0
 		 * Resultat :
@@ -119,8 +158,14 @@ public class Sudoku {
 		if (r.length() != 1) {r = r.substring(0, r.length()-2);}
 		return r + "}" ;
 	} // enClair
-	
-	static int toutSeul (int [][] m, int i, int j) {
+
+	/**
+	 * @param m un sudoku
+	 * @param i une ligne
+	 * @param j une colonne
+	 * @return -1 s'il y a plusieurs possibilitees au point (i ; j) sinon la seul possibilitee en ce point
+	 */
+	static int toutSeul(int[][] m, int i, int j) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -131,10 +176,19 @@ public class Sudoku {
 		 *  - -1 	dans les autres cas
 		 * 
 		 */
-		return -1 ; // A MODIFIER
+		boolean[] possible = lesPossiblesEn(m, i, j);
+		int valeurPossible = 0;
+		for (int k = 0; k < possible.length; k++) {
+			if (possible[k] && valeurPossible == 0) valeurPossible = k + 1;
+			else if (possible[k] && valeurPossible != 0) return -1;
+		}
+		return valeurPossible == 0 ? -1 : valeurPossible;
 	} // toutSeul
-	
-	static void essais (String grille) {
+
+	/**
+	 * @param grille sudoku en clair
+	 */
+	static void essais(String grille) {
 		/*
 		 * Prerequis : grille represente une grille de sudoku
 		 * (les chiffres sont consideres comme ranges par lignes)
@@ -148,11 +202,40 @@ public class Sudoku {
 		int[][] m = aPartirDe(grille);
 		System.out.println("Probleme\n\n"+enClair(m));
 
-		// A COMPLETER
+		for (int i = 0; i < m.length; i++) {
+			for (int j = 0; j < m.length; j++) {
+				if (m[i][j] != 0)
+					continue;
+
+				int value;
+				if ((value = toutSeul(m, i, j)) != -1)
+					m[i][j] = value;
+			}
+		} // On remarque que les changements precendant influe les changements suivant.
 		
 		System.out.println("Il se peut qu'on ait avance\n\n"+enClair(m));
 	} // essais
-	
+
+	/**
+	 * @param m un sudoku
+	 * @param i une ligne
+	 * @param j une colonne
+	 * @param value une valeur
+	 * @return <code>value</code> est plaçable au point (i ; j)
+	 */
+	private static boolean estPossible(int[][] m, int i, int j, int value) {
+		return !presentLigne(m, value, i) && !presentColonne(m, value, j) && !presentRegion(m, value, i, j);
+	}
+
+	/**
+	 * @param i ligne de la case
+	 * @param j colonne de la case
+	 * @return les coordonnes du point le plus en haut à gauche de la region contenant le point (i ; j)
+	 */
+	private static int[] region(int i, int j) {
+		return new int[] {n * (i / n), n * (j / n)};
+	}
+
 	public static void main(String[] args) {
 		String grille1 = 
 			"040 001 006 \n" +
@@ -166,6 +249,43 @@ public class Sudoku {
 			"910 750 042 \n" +
 			"008 002 700 \n" +
 			"400 300 080   " ;
+
+		int[][] sudoku = aPartirDe(grille1);
+		/*print -> resultat attendu*/
+		System.out.println(presentLigne(sudoku, 5, 0)); // false
+		System.out.println(presentLigne(sudoku, 1, 2)); // true
+		System.out.println(presentColonne(sudoku, 8, 0)); // false
+		System.out.println(presentColonne(sudoku, 8, 2)); // true
+		System.out.println(presentRegion(sudoku, 8, 0, 0)); // false
+		System.out.println(presentRegion(sudoku, 1, 3, 3)); // true
+		System.out.println(presentRegion(sudoku, 1, 7, 8)); // false
+		System.out.println(Arrays.toString(lesPossiblesEn(sudoku, 0, 0))); // [false, false, true, false, true, false, false, true, false]
+		System.out.println(Arrays.toString(lesPossiblesEn(sudoku, 6, 1))); // [false, false, false, false, false, false, false, false, false]
+		System.out.println(toutSeul(sudoku, 0, 0)); // -1
+		System.out.println(toutSeul(sudoku, 6, 1)); // -1
+		System.out.println(toutSeul(sudoku, 4, 4)); // 2
+		System.out.println(Arrays.toString(region(0, 0))); // [0, 0]
+		System.out.println(Arrays.toString(region(2, 7))); // [0, 6]
+		System.out.println(Arrays.toString(region(8, 1))); // [6, 0]
+
+		System.out.println("Essai grille à probleme !");
+		String grilleAProbleme =
+				"""
+						040 401 006\s
+						407 900 800\s
+						190 086 074\s
+						           \s
+						200 690 010\s
+						030 405 090\s
+						060 017 003\s
+						           \s
+						910 750 042\s
+						008 002 700\s
+						400 300 080  \s""";
+		// deux 4 sur la ligne 0 la colonne 0, la region [0, 0]
+		essais(grilleAProbleme);
+		// Si la grille est fausse au depart il n'y a pas d'erreur.
+
 		String grille2 = 
 			"030 000 006 \n" +
 			"000 702 300 \n" +
@@ -179,7 +299,7 @@ public class Sudoku {
 			"001 209 000 \n" +
 			"800 000 020   " ;
 		
-		essais(grille1) ;
+		essais(grille1);
 		essais(grille2) ;
 	}
 		
