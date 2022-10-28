@@ -289,7 +289,6 @@ public class Sudoku {
 						008 002 700\s
 						400 300 080\s""";
 		// deux 4 sur la ligne 0 la colonne 0, la region [0, 0]
-		// on place un 10 en [0, 0]
 		essais(grilleAProbleme);
 		// Si la grille est fausse au depart il n'y a pas d'erreur.
 
