@@ -64,7 +64,7 @@ public class Sudoku {
 	 * @param i ligne
 	 * @return v est present dans la ligne i
 	 */
-	static boolean presentLigne(int [][] m, int v, int i) {
+	static boolean presentLigne(int[][] m, int v, int i) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -129,7 +129,7 @@ public class Sudoku {
 	 * @param j une colonne
 	 * @return un tableau contenant (l'<code>index + 1</code> est possible au point (i ; j)
 	 */
-	static boolean [] lesPossiblesEn(int [][] m, int i, int j) {
+	static boolean [] lesPossiblesEn(int[][] m, int i, int j) {
 		/*
 		 * Prerequis :
 		 *  - m est un plateau de sudoku
@@ -254,11 +254,17 @@ public class Sudoku {
 		/*print -> resultat attendu*/
 		System.out.println(presentLigne(sudoku, 5, 0)); // false
 		System.out.println(presentLigne(sudoku, 1, 2)); // true
+		System.out.println(presentLigne(sudoku, 10, 0)); // false (pas possible 10)
+		System.out.println(presentLigne(sudoku, 0, 0)); // true (pas une valeur acceptable par le programme (cf prerequis))
 		System.out.println(presentColonne(sudoku, 8, 0)); // false
 		System.out.println(presentColonne(sudoku, 8, 2)); // true
+		System.out.println(presentColonne(sudoku, 10, 0)); // false (pas possible 10)
+		System.out.println(presentColonne(sudoku, 0, 0)); // true (pas une valeur acceptable par le programme (cf prerequis))
 		System.out.println(presentRegion(sudoku, 8, 0, 0)); // false
 		System.out.println(presentRegion(sudoku, 1, 3, 3)); // true
 		System.out.println(presentRegion(sudoku, 1, 7, 8)); // false
+		System.out.println(presentRegion(sudoku, 10, 0, 0)); // false (pas possible 10)
+		System.out.println(presentRegion(sudoku, 0, 0, 0)); // true (pas une valeur acceptable par le programme (cf prerequis))
 		System.out.println(Arrays.toString(lesPossiblesEn(sudoku, 0, 0))); // [false, false, true, false, true, false, false, true, false]
 		System.out.println(Arrays.toString(lesPossiblesEn(sudoku, 6, 1))); // [false, false, false, false, false, false, false, false, false]
 		System.out.println(toutSeul(sudoku, 0, 0)); // -1
@@ -281,8 +287,9 @@ public class Sudoku {
 						           \s
 						910 750 042\s
 						008 002 700\s
-						400 300 080  \s""";
+						400 300 080\s""";
 		// deux 4 sur la ligne 0 la colonne 0, la region [0, 0]
+		// on place un 10 en [0, 0]
 		essais(grilleAProbleme);
 		// Si la grille est fausse au depart il n'y a pas d'erreur.
 
