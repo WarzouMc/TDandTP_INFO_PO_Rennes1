@@ -6,6 +6,26 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+/**
+ * Quasiment pareil que le td mais avec tout les type possible (des Double, des Integer, des Person, ...)
+ * E represent ici un type dont on ne connait pas la class (ça peut etre n'importe quoi)
+ * Vous pouvez donc revenir sur exactement ce que demandait l'exo en suppriment tout les <E> puis en remplacent les E
+ * par int.
+ * (Ceux qui ont fait du scala : le <E> revient au [E])
+ *
+ * Je sais pas ce que ça vaut par rapport à la correction, mais j'ai essayer d'avoir une encapsulation pas horrible
+ * (ça reste bof à certain endroit parce que flm mais voila).
+ *
+ * A et le <code>implements Iterable</code> c'est juste pour pouvoir avoir accet au
+ * <code>
+ *     for (E element : list) {
+ *         //code
+ *     }
+ * </code>.
+ * Sinon tt est globalement comprehensible, à part <code>StringBuilder</code> mais un pti coup de google et voila, et les
+ * <code>Exception</code>
+ * @param <E> List element type
+ */
 public class BiLinkedList<E> implements Iterable<E> {
 
     private @Nullable Node<E> head;
@@ -21,7 +41,10 @@ public class BiLinkedList<E> implements Iterable<E> {
             return 0;
         int count = 0;
         Node<E> node = this.head;
-        while ((node = node.next) != null) count++;
+        while (node != null) {
+            node = node.next;
+            count++;
+        }
         return count;
     }
 
@@ -32,10 +55,19 @@ public class BiLinkedList<E> implements Iterable<E> {
     public void insertInHead(E element) {
         if (this.head == null) {
             this.head = new Node<>(element);
+            this.head.head = true;
             this.end = this.head;
+            this.end.end = true;
+            return;
         }
 
-        this.head.previous = new Node<>(element, null, this.head, true, false);;
+        if (this.head.equals(this.end)) {
+            this.end = this.head;
+            this.head = new Node<>(element, this.end, null, true, false);
+            return;
+        }
+
+        this.head.previous = new Node<>(element, this.head, null, true, false);
         this.head.head = false;
         this.head = this.head.previous;
     }
@@ -43,12 +75,15 @@ public class BiLinkedList<E> implements Iterable<E> {
     public void insertInEnd(E element) {
         if (this.head == null) {
             this.head = new Node<>(element);
+            this.head.head = true;
             this.end = this.head;
+            this.end.end = true;
             return;
         }
 
         if (this.head.equals(this.end)) {
-            this.end = new Node<>(element, this.head, null, false, true);
+            this.head.next = new Node<>(element, null, this.head, false, true);
+            this.end = this.head.next;
             return;
         }
 
@@ -63,8 +98,10 @@ public class BiLinkedList<E> implements Iterable<E> {
         if (this.head == null || index == -1)
             throw new NoSuchElementException();
 
-        if (index + 1 >= size())
+        if (index + 1 == size()) {
             insertInEnd(element);
+            return;
+        }
         this.head.insertElementAtIndex(element, index + 1);
     }
 
@@ -73,9 +110,16 @@ public class BiLinkedList<E> implements Iterable<E> {
         if (this.head == null || index == -1)
             throw new NoSuchElementException();
 
-        if (index == 0)
+        if (index == 1) {
             insertInHead(element);
+            return;
+        }
+
+        int size = size();
         this.head.insertElementAtIndex(element, index);
+        assert this.end != null;
+        if (index + 1 >= size)
+            this.end = this.end.next;
     }
 
     public void remove(E element) {
@@ -112,9 +156,10 @@ public class BiLinkedList<E> implements Iterable<E> {
         if (node == null)
             return -1;
 
-        while ((node = node.next) != null) {
+        while (node != null) {
             if (node.element.equals(element))
                 return count;
+            node = node.next;
             count++;
         }
 
@@ -123,7 +168,16 @@ public class BiLinkedList<E> implements Iterable<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return null;//todo
+        return new Itr<>(this.head);
+    }
+
+    public String toPrettyString() {
+        if (isEmpty())
+            return "BiLinkedList[]";
+        StringBuilder builder = new StringBuilder("BiLinkedList[");
+        for (E e : this)
+            builder.append(e).append(", ");
+        return builder.substring(0, builder.length() - 2) + ']';
     }
 
     @Override
@@ -154,54 +208,35 @@ public class BiLinkedList<E> implements Iterable<E> {
         }
 
         private void insertElementAtIndex(T element, int index) {
+            index = Math.abs(index);
             if (index == 0)
                 insertElement(element);
-            else if (this.end || this.next == null)
+            else if (this.next == null)
                 insertElement(element);
             else this.next.insertElementAtIndex(element, index - 1);
         }
 
         private void insertElement(T element) {
             T oldElement = this.element;
-            this.element = element;
             Node<T> oldNext = this.next;
             this.next = new Node<>(oldElement, oldNext, this, false, this.end);
             this.end = false;
+            this.element = element;
         }
 
         private void remove(int index) {
             index = Math.abs(index);
             if (index == 0)
-                removeElement(element);
+                removeElement();
             else if (this.next == null)
                 throw new ArrayIndexOutOfBoundsException();
             else this.next.remove(index - 1);
         }
 
-        private void removeElement(T element) {
+        private void removeElement() {
             if (this.previous == null)
                 return;
             this.previous.next = this.next;
-        }
-
-        public T getElement() {
-            return this.element;
-        }
-
-        public @Nullable Node<T> getNext() {
-            return this.next;
-        }
-
-        public @Nullable Node<T> getPrevious() {
-            return this.previous;
-        }
-
-        public void setNext(@Nullable Node<T> next) {
-            this.next = next;
-        }
-
-        public void setPrevious(@Nullable Node<T> previous) {
-            this.previous = previous;
         }
 
         @Override
@@ -228,9 +263,10 @@ public class BiLinkedList<E> implements Iterable<E> {
 
         @Override
         public String toString() {
+            T previous = this.previous == null ? null : this.previous.element;
             return "Node{" +
                     "element=" + element +
-                    ", next=" + next +
+                    ", next=" + this.next +
                     ", previous=" + previous +
                     ", head=" + head +
                     ", end=" + end +
@@ -248,16 +284,16 @@ public class BiLinkedList<E> implements Iterable<E> {
 
         @Override
         public boolean hasNext() {
-            return this.node == null || this.node.next == null;
+            return this.node != null;
         }
 
         @Override
         public T next() {
             if (!hasNext())
                 throw new NoSuchElementException();
+            T t = this.node.element;
             this.node = this.node.next;
-            assert this.node != null;
-            return this.node.element;
+            return t;
         }
     }
 }
