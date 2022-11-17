@@ -1,17 +1,15 @@
 package fr.warzou.tp4and5;
 
 import fr.warzou.tp4and5.animal.Animal;
+import fr.warzou.tp4and5.animal.bird.Bird;
+import fr.warzou.tp4and5.animal.bird.impl.Falcon;
+import fr.warzou.tp4and5.animal.deer.impl.DeerAnimal;
 import fr.warzou.tp4and5.animal.felin.impl.Lion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Zoo {
     private String name;
@@ -25,7 +23,12 @@ public class Zoo {
     }
 
     public static void main(String[] args) {
-        System.out.println(new Lion("Wsh Simba", 3783));
+        Zoo zoo = new Zoo("OwO le Zoo", 10);
+        zoo.addAnimal(new Lion(null, "Wsh Simba", 61));
+        zoo.addAnimal(new Falcon(null, "Vrai con", 15));
+        zoo.addAnimal(new Lion(null, "Wsh Zimba", 62));
+        zoo.addAnimal(new DeerAnimal(null, "Coucouuuu", 10));
+        System.out.println(zoo.especeLaPlusPresente());
     }
 
     public Animal oldest() {
@@ -60,6 +63,46 @@ public class Zoo {
 
     public void removeAnimal(@NotNull Animal animal) {
         findFirst(animal).ifPresent(i -> setAnimal(i, null));
+    }
+
+    public Class<? extends Animal> especeLaPlusPresente() {
+        Map<Class<? extends Animal>, Integer> superClasses = new HashMap<>();
+        for (Animal animal : this.population) {
+            if (animal == null)
+                continue;
+
+            Class<? extends Animal> clazz = animal.getClass().getSuperclass().asSubclass(Animal.class);
+            if (superClasses.containsKey(clazz))
+                continue;
+            superClasses.put(clazz, countSpecies(clazz));
+        }
+        return superClasses.entrySet().stream().min(new Comparator<Map.Entry<Class<? extends Animal>, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Class<? extends Animal>, Integer> o1, Map.Entry<Class<? extends Animal>, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        }).orElseThrow(NoSuchElementException::new).getKey();
+    }
+
+    private int countSpecies(Class<? extends Animal> clazz) {
+        return (int) Arrays.stream(this.population).filter(clazz::isInstance).count();
+    }
+
+    public void creerSpectacle(Bird bird) {
+        bird.addSpectacle();
+        System.out.println("'" + bird + "' participera...");
+    }
+
+    public Bird trouverOiseauLeMoinsFatigue() {
+        AtomicReference<Bird> birdAtomicReference = new AtomicReference<>();
+        Arrays.stream(this.population).filter(animal -> animal instanceof Bird).map(animal -> (Bird) animal).forEach(bird -> {
+            Bird minBird = birdAtomicReference.get();
+            if (minBird == null)
+                birdAtomicReference.set(bird);
+            else if (minBird.getSpectacle() < bird.getSpectacle())
+                birdAtomicReference.set(bird);
+        });
+        return birdAtomicReference.get();
     }
 
     @Override

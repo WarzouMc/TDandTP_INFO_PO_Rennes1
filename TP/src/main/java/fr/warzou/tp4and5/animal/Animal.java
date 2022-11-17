@@ -3,10 +3,13 @@ package fr.warzou.tp4and5.animal;
 import java.util.Objects;
 
 public abstract class Animal {
+
+    protected final Animal parent;
     protected String name;
     protected int age;
 
-    public Animal(String name, int age) {
+    public Animal(Animal parent, String name, int age) {
+        this.parent = parent;
         this.name = name;
         this.age = age;
     }
@@ -20,6 +23,10 @@ public abstract class Animal {
     }
 
     public abstract int getLiveTime();
+
+    public Animal getParent() {
+        return this.parent;
+    }
 
     public int getAge() {
         return this.age;

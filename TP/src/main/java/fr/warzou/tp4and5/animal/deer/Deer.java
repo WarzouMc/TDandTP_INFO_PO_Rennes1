@@ -3,8 +3,8 @@ package fr.warzou.tp4and5.animal.deer;
 import fr.warzou.tp4and5.animal.Animal;
 
 public abstract class Deer extends Animal {
-    public Deer(String name, int age) {
-        super(name, age);
+    public Deer(Animal parent, String name, int age) {
+        super(parent, name, age);
     }
 
     @Override

@@ -1,10 +1,11 @@
 package fr.warzou.tp4and5.animal.felin.impl;
 
+import fr.warzou.tp4and5.animal.Animal;
 import fr.warzou.tp4and5.animal.felin.Feline;
 
 public class Lion extends Feline {
-    public Lion(String name, int age) {
-        super(name, age);
+    public Lion(Animal parent, String name, int age) {
+        super(parent, name, age);
     }
 
     @Override

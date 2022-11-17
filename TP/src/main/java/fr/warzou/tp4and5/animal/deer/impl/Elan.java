@@ -1,10 +1,11 @@
 package fr.warzou.tp4and5.animal.deer.impl;
 
+import fr.warzou.tp4and5.animal.Animal;
 import fr.warzou.tp4and5.animal.deer.Deer;
 
 public class Elan extends Deer {
-    public Elan(String name, int age) {
-        super(name, age);
+    public Elan(Animal parent, String name, int age) {
+        super(parent, name, age);
     }
 
     @Override

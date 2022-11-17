@@ -1,10 +1,11 @@
 package fr.warzou.tp4and5.animal.deer.impl;
 
+import fr.warzou.tp4and5.animal.Animal;
 import fr.warzou.tp4and5.animal.deer.Deer;
 
 public class Daim extends Deer {
-    public Daim(String name, int age) {
-        super(name, age);
+    public Daim(Animal parent, String name, int age) {
+        super(parent, name, age);
     }
 
     @Override

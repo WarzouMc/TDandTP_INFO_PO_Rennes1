@@ -1,10 +1,11 @@
 package fr.warzou.tp4and5.animal.bird.impl;
 
+import fr.warzou.tp4and5.animal.Animal;
 import fr.warzou.tp4and5.animal.bird.Bird;
 
 public class Parrot extends Bird {
-    public Parrot(String name, int age) {
-        super(name, age);
+    public Parrot(Animal parent, String name, int age) {
+        super(parent, name, age);
     }
 
     @Override
