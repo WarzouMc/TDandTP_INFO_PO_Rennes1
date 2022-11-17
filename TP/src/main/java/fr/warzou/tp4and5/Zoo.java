@@ -76,12 +76,11 @@ public class Zoo {
                 continue;
             superClasses.put(clazz, countSpecies(clazz));
         }
-        return superClasses.entrySet().stream().min(new Comparator<Map.Entry<Class<? extends Animal>, Integer>>() {
-            @Override
-            public int compare(Map.Entry<Class<? extends Animal>, Integer> o1, Map.Entry<Class<? extends Animal>, Integer> o2) {
-                return o2.getValue().compareTo(o1.getValue());
-            }
-        }).orElseThrow(NoSuchElementException::new).getKey();
+        return min(superClasses).orElseThrow(NoSuchElementException::new).getKey();
+    }
+
+    private <T> Optional<Map.Entry<Class<? extends T>, Integer>> min(Map<Class<? extends T>, Integer> map) {
+        return map.entrySet().stream().min((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
     }
 
     private int countSpecies(Class<? extends Animal> clazz) {
